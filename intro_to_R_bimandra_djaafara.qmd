@@ -1,0 +1,540 @@
+---
+title: "Pengantar pemrograman dengan R"
+subtitle: "modul pengantar Indonesia Infectious Disease Modelling Community - INDEMIC"
+author: "Bimandra Djaafara"
+date: today
+format: 
+  html:
+    embed-resources: true
+    theme: cosmo
+    toc: true
+editor: visual
+bibliography: references.bib
+---
+
+## Pengantar
+
+Pemodelan matematika untuk penyakit infeksi (*infectious disease modelling*) mengalami perkembangan yang cukup pesat semenjak pandemi COVID-19. Perkembangan ini dapat dilihat dari berbagai aspek seperti dari sisi minat orang-orang untuk mempelajari metode-metodenya, perkembangan metode pemodelan baru, hingga perkembangan *tools* untuk analisis dan pemodelan itu sendiri.
+
+Dari banyaknya *tools* dan *software* yang dikembangkan untuk membantu melakukan analisis dan pemodelan terkait penyakit infeksi, mayoritas dikembangkan dengan menggunakan bahasa pemrograman R. Ada juga *software* dan *tools* yang dikembangkan di bahasa pemrograman lain, namun dibuatkan *interface*-nya sehingga dapat dijalankan atau dieksekusi dengan mudah dengan menggunakan R.
+
+Atas dasar ini, sangat penting bagi praktisi/peniliti pemodelan penyakit infeksi untuk mengetahui bagaimana cara menggunakan bahasa pemrograman R sehingga dapat mengakses berbagai macam *software* dan *tools* yang sudah diproduksi untuk mempermudah pekerjaan mereka.
+
+Di internet, akan sangat mudah untuk mencari *tutorial online* untuk mempelajari R, mulai dari tulisan di blog, buku yang tersedia dengan gratis, kelas *online course*, maupun konten-konten di *YouTube*. Sesi pengantar ini harapannya akan menjadi gerbang masuk untuk mempermudah proses teman-teman semua belajar R. Setelah mengikuti sesi ini, teman-teman tidak diharapkan untuk langsung menjadi *jago* menggunakan R, tapi bisa dengan mudah berselancar di internet untuk mencari solusi atas permasalahan yang sedang dihadapi terkait penggunaan R, atau bertanya kepada teman lain yang sudah lebih ahli dan berpengalaman.
+
+Mayoritas dari konten sesi pengantar ini akan berasal dari buku: [R for Data Science (2nd Edition) karangan Hadley Wickham, dkk](https://r4ds.hadley.nz/) [@wickham2023].
+
+## Kenapa R?
+
+Di luar dari alasan yang sudah saya sebutkan sebelumnya, beberapa alasan utama banyak orang menggunakan R adalah:
+
+-   *Open source*
+-   Memiliki banyak fungsi-fungsi statistik
+-   Fleksibel
+-   *Community-driven* (*support* dan *repository*)
+
+::: callout-note
+Selain package yang tersedia di CRAN (the Comprehensive R Archive Network), banyak package-package lain yang dapat diinstall dari repository github.
+:::
+
+## Proses analisis
+
+Wickham, dkk memberikan ilustrasi sederhana tentang bagimana proses analisis data biasanya terjadi ketika kita menggunakan R:
+
+![Alur analisis data oleh Wickham, dkk](img/wickham_workflow.png)
+
+Proses pertama adalah melakukan importasi data ke dalam R. Data bisa dalam bentuk berbagai macam format: .txt, .csv, .xls, .xlsx, dll.
+
+Setelah itu, data yang sudah dibaca akan 'dirapikan' (*tidy*) supaya konsisten dan memudahkan proses analisis. Wickham dkk memiliki *package* pemrograman bernama *tidyverse* yang akan memudahkan proses ini.
+
+Setelah data dirapikan, kita memasuki proses iteratif berupa transformasi data (menjadi variabel-variabel baru untuk analisis), visualisasi, dan pemodelan. Proses ini akan berulang hingga kita mendapatkan hasil analisis untuk menjawab pertanyaan kita terkait data yang kita gunakan.
+
+Setelah itu, kita masuk dalam proses mengkomunikasikan hasil analisis kita ke orang lain.
+
+Pengantar ini akan membahas secara singkat bagaimana kita membaca, merapikan, mentransformasi, dan melakukan visualisasi data yang kita miliki. Akan dibahas juga mengenai fitur-fitur dasar R dan RStudio agar teman-teman menjadi lebih familiar dengan *software* ini.
+
+## Instalasi R dan RStudio
+
+Bila teman-teman belum melakukan instalasi, lakukan proses sebagai berikut:
+
+1.  Download R dari laman: <https://cran.r-project.org/bin/windows/base/>
+2.  Install R
+3.  Download RStudio dari laman: <https://posit.co/download/rstudio-desktop/>
+4.  Install RStudio
+
+R adalah program/bahasa pemrograman untuk komputasi statistika dan grafik.
+
+RStudio adalah sebuah IDE (*integrated development environment*), tempat kita mengetik code, melakukan *debug*, membuat *project* analisis, dsb.
+
+Untuk menggunakan R, buka aplikasi RStudio yang sudah diinstall di komputer Anda (tidak perlu membuka R).
+
+## Halaman muka RStudio
+
+Ketika membuka RStudio, teman-teman akan dihadapkan pada halaman muka yang berbeda-beda. Tetapi halaman RStudio teman-teman seharusnya memiliki komponen-komponen sebagai berikut:
+
+1.  Panel script (untuk menulis program)
+2.  Panel console (untuk mengeksekusi program)
+3.  Panel environment (untuk melihat data yang sedang dibuka di R)
+4.  Panel files/plots/packages (untuk melihat isi folder direktori, hasil plot, dan packages yang sudah diinstall)
+
+![Halaman muka RStudio](img/rstudio_interface.png)
+
+Saya akan mendemonstrasikan sedikit bagaimana menavigasi halaman muka RStudio.
+
+## Instalasi package
+
+*Package* merupakan *software* yang ditulis dan dikembangkan, yang berisi *function* atau *data* yang dapat digunakan untuk proses analisis data yang akan kita lakukan.
+
+Proses instalasi *package* di R sangat sederhana. Misal kita akan melakukan instalasi *package* bernama *tidyverse* yang berisi di dalamnya banyak *package* lain dan fungsi-fungsi untuk merapikan data, transformasi data, dan visualisasi data. Teman-teman dapat menuliskan:
+
+```{r}
+#| eval: false
+install.packages('tidyverse')
+```
+
+Tunggu proses instalasi. Setelah instalasi selesai, maka untuk menggunakan package tersebut, kita harus 'memanggil'-nya dengan menggunakaan function *library*.
+
+```{r}
+#| eval: false
+library(tidyverse)
+```
+
+Proses instalasi cukup dilakukan sekali saja, kecuali teman-teman ingin menginstall versi terbaru dari *package* tersebut. Namun, di setiap sesi baru RStudio teman-teman, teman-teman harus melakukan library(nama_package) apabila ingin menggunakan *function* yang ada di dalam *package* tersebut.
+
+::: callout-note
+Coba install beberapa package lain dengan menggunakan function `install.packages()`. Untuk mencari package coba buka link berikut: <https://cran.r-project.org/web/packages/available_packages_by_name.html>
+:::
+
+## Aritmatika dasar
+
+Kita bisa menggunakan R sebagai kalkulator:
+
+```{r}
+#| eval: false
+
+2 + 3 # penjumlahan
+
+5 - 1 # pengurangan
+
+6 * 7 # perkalian
+
+9 / 2 # pembagian
+
+5^3 # perpangkatan
+
+sqrt(25) # akar pangkat 2
+
+log(10) # logaritma natural
+
+# dan sebagai-nya
+# tanda # sebagai penanda komentar, tidak dieksekusi oleh R sebagai kode
+
+```
+
+\*spasi antar simbol dan angka tidak berpengaruh
+
+## Menyimpan nilai ke dalam variabel
+
+Kita bisa menyimpan hasil operasi ke dalam suatu variabel
+
+```{r}
+#| eval: false
+
+# simpan variabel x dengan nilai 5
+# variabel y dengan nilai 9
+# jumlahkan x dan y, lalu simpan sebagai z
+
+x <- 5
+y <- 9
+z <- x + y
+
+z
+
+# atau
+
+x = 5
+y = 9
+z = x + y
+
+z
+
+# ingat bahwa R itu case-sensitive
+# x sekarang memiliki nilai, tetapi X tidak
+# coba eksekusi
+
+x
+
+# dan
+
+X
+
+# apa perbedaannya?
+
+```
+
+## Strings (data berupa karakter)
+
+Kita bisa menyimpan dan memanipulasi data berupa karakter di R.
+
+```{r}
+#| eval: false
+
+nama <- "Andra"
+komunitas <- "INDEMIC"
+
+# menggabungkan keduanya
+cat(nama, komunitas)
+
+```
+
+## Vektor
+
+Merupakan bentuk kombinasi data yang sederhana. Hanya dapat menyimpan data dengan tipe yang sama, misal, vektor angka atau vektor string. Gunakan fungsi c() untuk membuat vektor.
+
+```{r}
+#| eval: false
+
+nama <- "Andra"
+komunitas <- "INDEMIC"
+
+x <- 5
+y <- 9
+
+vektor_string <- c(nama,komunitas)
+vektor_string[1]
+vektor_string[2]
+vektor_string[3]
+
+vektor_angka <- c(x,y)
+
+vektor_angka < 8
+
+# operator logika bisa juga disimpan dalam vektor
+
+vektor_logika <- c(TRUE,TRUE,FALSE,TRUE)
+
+# perhitungan di R mengikuti prinsip vektorisasi
+
+vektor_angka * 10
+
+# berapa banyak anggota dari sebuah vektor?
+length(vektor_angka)
+
+```
+
+## Sekuens dan replikasi
+
+Ada fungsi-fungsi di R yang memudahkan kita membuat sekuens angka atau replikasi nilai berulang berupa vektor.
+
+```{r}
+#| eval: false
+
+seq(from=1, to=10, by=0.5)
+
+# bisa juga coba
+seq(1,10,0.5)
+
+rep(x=5,length.out=10)
+
+# bisa juga coba
+rep(5,10)
+
+# bisa juga gunakan seq_len()
+seq_len(10) # apa yg dilakukan seq_len()?
+
+```
+
+## List
+
+List cukup berguna untuk menyimpan data dengan berbagai macam format dan ukuran.
+
+```{r}
+#| eval: false
+
+listku <- list(seq(1,10,1),c("Andra","Tika","Firdaus","Nando"))
+
+listku[1]
+
+listku[[1]]
+
+# apa bedanya?
+
+# kita bisa memberi nama list
+
+listku_nama <- list(angka=seq(1,10,1),nama=c("Andra","Tika","Firdaus","Nando"))
+listku_nama$angka
+listku_nama$nama
+
+```
+
+## Data frame
+
+Merupakan data berupa tabel yang biasa kita gunakan. Baris menunjukkan observasi, sedangkan kolom menunjukkan nilai dari variabel-variabel.
+
+```{r}
+#| eval: false
+
+dataku <- data.frame(nama=c("Axel","Jessica","Xaviera"),
+                     kampus=c("NUS","ITB","KAIST"),
+                     skor=c(9,8.5,8.75))
+
+dataku
+dataku$nama
+dataku[1,]
+dataku[,2]
+dataku[2,3]
+dataku[2,2:3]
+
+```
+
+## Functions
+
+Alat bantu untuk pemrosesan data di R. Functions biasanya memiliki input yang harus kita berikan (kadang tidak perlu semua diberikan, atau ada nilai *default*), dan akan memberikan output berdasarkan input.
+
+Biasanya berbentuk nama_fungsi(). Contoh fungsi yang sudah kita gunakan: seq(), rep()
+
+Kita bisa membuat fungsi *custom* sesuai kebutuhan kita (akan dibahas nanti).
+
+Untuk melihat dokumentasi dari fungsi yang akan kita pakai bisa gunakan ?. Contoh: ?mean
+
+```{r}
+#| eval: false
+
+x <- c(10,4,50,100)
+
+mean(x)
+
+x_na <- c(10,4,50,NA)
+
+mean(x_na)
+mean(x_na,na.rm=TRUE)
+
+```
+
+## tidyverse
+
+Merupakan package berisi banyak package dan fungsi yang memudahkan kita melakukan proses data analisis di R.
+
+Sesudah install, kita bisa load tidyverse di R dengan menggunakan library().
+
+```{r}
+#| eval: false
+
+library(tidyverse)
+
+```
+
+Dengan melakukan ini, banyak fungsi yang sudah tersimpan di dalam package tidyverse yang bisa kita gunakan.
+
+## Membaca file csv
+
+Pertama kita cek direktori kita ada di mana dengan menggunakan getwd().
+
+```{r}
+#| eval: false
+
+getwd()
+
+# untuk membuka file .csv, kita bisa gunakan fungsi read_csv
+
+data_coc <- read_csv("data/peserta_coc.csv")
+data_coc$skor
+
+```
+
+## Transformasi dan manipulasi data
+
+Kita akan gunakan library gapminder. Mari install dan load gapminder.
+
+```{r}
+#| eval: false
+
+install.packages("gapminder")
+library(gapminder)
+
+# liat beberapa row teratas
+head(gapminder)
+
+# ada negara apa saja di sana?
+unique(gapminder$country)
+
+# filter data Indonesia
+# anda akan melihat tanda piping %>%, yg bisa ditulis dengan cepat dengan ctrl+shift+M
+gapminder_idn <- gapminder %>% filter(country == "Indonesia")
+
+# kita bisa filter banyak value
+# misal indonesia & malaysia
+gapminder_idn_mys <- gapminder %>% filter(country %in% c("Indonesia","Malaysia"))
+
+# kita bisa filter multiple variables
+gapminder_idn_1990 <- gapminder %>% filter(country == "Indonesia" & year>1990)
+
+# hitung total gdp. rumus pop * gdpPercap
+gapminder_idn <- gapminder_idn %>% mutate(gdp=pop * gdpPercap)
+gapminder_idn
+
+```
+
+Mari kita gunakan data lain: <https://kjhealy.github.io/covdata/>
+
+```{r}
+#| eval: false
+
+# lakukan instalasi terlebih dahulu
+
+install.packages("remotes")
+remotes::install_github("kjhealy/covdata@main")
+
+# jika tidak berhasil, bisa lakukan proses di bawah
+
+if (!require("drat")) {
+    install.packages("drat")
+    library("drat")
+}
+
+drat::addRepo("kjhealy")
+
+install.packages("covdata")
+
+# buka package
+library(covdata)
+
+head(covnat_daily)
+
+# berapa total kasus dan kematian dari masing-masing negara?
+total_cases_deaths <- covnat_daily %>% 
+  group_by(cname) %>% 
+  summarise(total_cases=sum(cases,na.rm=TRUE),
+            total_deaths=sum(deaths,na.rm=TRUE))
+
+# bisa gunakan summary statistics lain: mean, median, quantile, dsb.
+
+```
+
+## Visualisasi data
+
+Salah satu function visualisasi data yang cukup marak digunakan sekarang adalah ggplot. Kita bisa melihat di banyak publikasi-publikasi ilmiah sekarang, grafik-grafik yang disajikan dibuat menggunakan ggplot di R.
+
+```{r}
+#| eval: false
+
+# mari kita gunakan data covid indonesia
+covnat_daily_idn <- covnat_daily %>% filter(cname == "Indonesia")
+
+# mari buat visualisasi sederhana untuk kasus harian covid di indonesia
+
+ggplot(covnat_daily_idn, aes(x=date,y=cases)) +
+  geom_line()
+
+# kita bisa customise grafiknya
+ggplot(covnat_daily_idn, aes(x=date,y=cases)) +
+  geom_line(col="red") +
+  theme_bw() +
+  labs(x="Tanggal",y="Kasus harian") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=0.5))
+
+# membandingkan dua negara
+# covnat_daily_idn_mys <- covnat_daily %>% filter(cname %in% c("Indonesia","Malaysia"))
+
+ggplot(covnat_daily_idn_mys, aes(x=date,y=cases,col=cname)) +
+  geom_line() +
+  theme_bw() +
+  labs(x="Tanggal",y="Kasus harian",col="Negara") +
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust=0.5))
+
+# kita juga bisa membuat barplot
+total_cases_deaths_idn_mys <- total_cases_deaths %>%
+  filter(cname %in% c("Indonesia","Malaysia"))
+ggplot(total_cases_deaths_idn_mys, aes(x=cname,y=total_cases)) +
+  geom_col(fill="blue") +
+  theme_classic() +
+  labs(x="Negara",y="Total kasus")
+
+```
+
+::: callout-note
+Untuk memberi kode warna dengan `fill` atau `col`, kita bisa menggunakan code hex dari suatu warna. Coba cari code hex warna dari website ini: <https://colorbrewer2.org/> lalu ganti "blue" dengan salah satu code hex yang Anda pilih. Contoh: "#e6550d".
+:::
+
+## Functions
+
+Kita sudah mencoba menggunakan beberapa functions yang kita load dari beberapa package di R. Kita juga bisa membuat function custom sendiri, sesuai dengan kebutuhan analisis kita. Dengan menulis function, harapannya, untuk sebuah proses analisis data yang dilakukan berulang, kita tidak perlu menulis panjang secara berulang.
+
+Mari tulis sebuah fungsi sederhana, input dari fungsi ini adalah 2 buah angka, x dan y, lalu fungsi ini akan melakukan operasi penjumlahan, pengurangan, perkalian, dan pembagian dari kedua angka ini dan menghasilkan output berupa list.
+
+```{r}
+#| eval: false
+
+# kita beri nama function-nya: tambah_kurang_kali_bagi
+
+tambah_kurang_kali_bagi <- function(x,y){
+  
+  tambah <- x + y
+  kurang <- x - y
+  kali <- x * y
+  bagi <- x / y
+  
+  return(list(penjumlahan=tambah,pengurangan=kurang,perkalian=kali,pembagian=bagi))
+}
+
+tambah_kurang_kali_bagi(10,20)
+
+```
+
+## if-else dan for-loop
+
+Logika penggunaan if-else di R.
+
+```{r}
+#| eval: false
+
+# misal kita mau evaluasi suatu angka punya nilai positif, negatif, atau nol
+
+x <- -0.00001
+
+if (x < 0){
+  print("negatif")
+} else if(x == 0){
+  print("nol")
+} else{
+  print("positif")
+}
+
+```
+
+For loop berguna apabila kita ingin melakukan operasi secara berulang. Misal kita punya sebuah list berisi pasangan angka yang mau kita hitung operasi tambah, kurang, kali, dan bagi.
+
+```{r}
+#| eval: false
+
+# misal kita punya 3 pasangan angka dalam sebuah list
+
+angka_angka <- list(c(4,15),c(20,8),c(159,13))
+
+# gunakan for loop untuk melakukan tambah_kurang_kali_bagi untuk ketiga pasangan angka
+
+# kita bisa simpan hasilnya ke sebuah list
+list_hasil <- list()
+
+for(i in seq_len(length(angka_angka))){
+  
+  a <- angka_angka[[i]][1]
+  b <- angka_angka[[i]][2]
+  
+  list_hasil[[i]] <- tambah_kurang_kali_bagi(a,b)
+  
+}
+
+list_hasil[[1]]
+list_hasil[[2]]
+list_hasil[[3]]
+
+```
+
+## Penutup
+
+Sekian tutorial singkat penggunaan R. Banyak sekali materi-materi yang bisa dipelajari secara online di internet. Saya menyarankan untuk membaca materi yang ada di buku [R for Data Science](https://r4ds.hadley.nz/) untuk memperdalam kemahiran menggunakan R.
+
+Apabila ada pertanyaan atau request materi mengenai penggunaan R secara lebih lanjut, silakan email indemic.community\@gmail.com atau post di WhatsApp group.
+
+Terima kasih :)
